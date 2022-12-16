@@ -17,7 +17,9 @@ public class Library {
      * Creates a Library instance
      */
     public Library() {
-        //TODO 1: Initialize Attributes
+        //Initialize Attributes
+        this.bloomFilter = new boolean[BLOOM_FILTER_SIZE];
+        this.books = new LinkedList<>();
     }
 
     /**
@@ -48,7 +50,12 @@ public class Library {
      * @param b - given book
      */
     public void add(Book b) {
-        //TODO 2: Implement add Method
+        //Implement add Method
+        books.add(b);
+        int[] hashValues = generateHashValues(b);
+        for (int hashValue : hashValues) {
+            bloomFilter[hashValue] = true;
+        }
     }
 
     /**
@@ -58,8 +65,14 @@ public class Library {
      * @return - index of the book if the book is in the library, else -1
      */
     public int findInLibrary(Book b) {
-        //TODO 4: Implement findInLibrary method
-        return -1;
+        //Implement findInLibrary method
+        if (b == null) {
+            return -1;
+        } else if (!bloomFilterHit(b)) {
+            return -1;
+        } else {
+            return books.indexOf(b);
+        }
     }
 
     /**
@@ -70,7 +83,12 @@ public class Library {
      */
 
     private boolean bloomFilterHit(Book b) {
-        //TODO 3: Implement bloomFilterHit Method
-        return false;
+        //Implement bloomFilterHit Method
+        for (int hashValue : generateHashValues(b)) {
+            if (!bloomFilter[hashValue]) {
+                return false;
+            }
+        }
+        return true;
     }
 }
